@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Display</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        .product-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .product-card-header {
+            background-color: #f8f8f8;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: bold;
+            color: #555;
+            text-transform: uppercase;
+        }
+
+        .product-card-body {
+            padding: 20px;
+        }
+
+        .product-card-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .product-card-title {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .product-card-price {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .product-card-popularity {
+            font-size: 16px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Mobile Phones filtered by descending popularity</h1>
+        <div id="productList"></div>
+    </div>
+
+    <script>
+        // Fetch and display products
+        fetch('https://s3.amazonaws.com/open-to-cors/assignment.json')
+            .then(response => response.json())
+            .then(data => {
+                const products = data.products;
+                const productsArray = Object.values(products);
+                const sortedProducts = productsArray.sort((a, b) => b.popularity - a.popularity);
+                const productList = document.getElementById('productList');
+                sortedProducts.forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+
+                    const header = document.createElement('div');
+                    header.className = 'product-card-header';
+                    header.textContent = product.title;
+                    card.appendChild(header);
+
+                    const body = document.createElement('div');
+                    body.className = 'product-card-body';
+
+                    const row1 = document.createElement('div');
+                    row1.className = 'product-card-row';
+                    const price = document.createElement('span');
+                    price.className = 'product-card-price';
+                    price.textContent = 'Price: ' + product.price;
+                    row1.appendChild(price);
+                    body.appendChild(row1);
+
+                    const row2 = document.createElement('div');
+                    row2.className = 'product-card-row';
+                    const popularity = document.createElement('span');
+                    popularity.className = 'product-card-popularity';
+                    popularity.textContent = 'Popularity: ' + product.popularity;
+                    row2.appendChild(popularity);
+                    body.appendChild(row2);
+
+                    card.appendChild(body);
+                    productList.appendChild(card);
+                });
+            })
+            .catch(error => console.error('Error fetching products:', error));
+    </script>
+</body>
+
+</html>
